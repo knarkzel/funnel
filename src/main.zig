@@ -13,8 +13,6 @@ pub fn init() void {
 }
 
 pub fn main() !void {
-    var buffer: [100]u8 = undefined;
-    const numbers: [5]usize = .{ 1, 2, 3, 4, 5 };
-    const slice = try std.fmt.bufPrint(buffer[0..], "{d}", .{numbers[0]});
+    const slice = try std.fmt.allocPrint(allocator, "0x{x}", .{0x1234});
     Console.write(slice);
 }
