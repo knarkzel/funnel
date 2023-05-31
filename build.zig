@@ -10,6 +10,7 @@ pub fn build(b: *std.Build) void {
     });
     funnel.setLinkerScriptPath(.{ .path = "linker.ld" });
     funnel.addAssemblyFile("src/kernel/gdt.s");
+    funnel.addAssemblyFile("src/kernel/idt.s");
     b.installArtifact(funnel);
 
     // Run with qemu

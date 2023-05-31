@@ -1,5 +1,6 @@
 const std = @import("std");
 const Gdt = @import("kernel/Gdt.zig");
+const Idt = @import("kernel/Idt.zig");
 const Console = @import("driver/Console.zig");
 const Allocator = @import("driver/Allocator.zig");
 const allocator = Allocator.allocator;
@@ -7,15 +8,13 @@ const allocator = Allocator.allocator;
 pub fn init() void {
     Console.clear();
     Gdt.init();
+    Idt.init();
     Allocator.init();
 }
 
 pub fn main() !void {
-    Console.write("Hello, world!");
-    var numbers = try allocator.alloc(u32, 10);
-    for (numbers, 0..) |*number, i|
-        number.* = i;
-    const message = try std.fmt.allocPrint(allocator, "{any}", .{numbers});
-    Console.write(message);
-    @panic("arstarst");
+    var buffer: [100]u8 = undefined;
+    var numbers = .{ 1, 2, 3, 4, 5 };
+    const slice = try std.fmt.bufPrint(buffer[0..], "{d}", .{numbers[0]});
+    Console.write(slice);
 }

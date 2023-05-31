@@ -10,6 +10,7 @@ pub fn clear() void {
     var i: usize = 0;
     while (i < 80 * 25) : (i += 1)
         buffer[i] = color << 8 | ' ';
+    moveCursor(0, 0);
 }
 
 pub fn write(text: []const u8) void {

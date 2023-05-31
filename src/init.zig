@@ -22,6 +22,7 @@ export var stack: [16 * 1024]u8 align(16) linksection(".bss") = undefined;
 // Utilities
 const std = @import("std");
 const utils = @import("utils.zig");
+const Isr = @import("kernel/Isr.zig");
 const Console = @import("driver/Console.zig");
 
 pub fn panic(message: []const u8, _: ?*std.builtin.StackTrace, ret_addr: ?usize) noreturn {
@@ -35,6 +36,22 @@ pub fn panic(message: []const u8, _: ?*std.builtin.StackTrace, ret_addr: ?usize)
     Console.setColor(.red, .black);
     Console.write(message);
     while (true) utils.hlt();
+}
+
+export fn isrHandler(registers: Isr.Registers) void {
+    if (Isr.getHandler(registers.number)) |handler|
+        handler(registers)
+    else {
+        Console.write("Received interrupt: 0x\n");
+    }
+}
+
+export fn irqHandler(registers: Isr.Registers) void {
+    if (registers.number >= 40)
+        utils.outb(0xA0, 0x20); // Send reset signal to slave
+    utils.outb(0x20, 0x20); // Send reset signal to master
+    if (Isr.getHandler(registers.number)) |handler|
+        handler(registers);
 }
 
 export fn _start() void {
