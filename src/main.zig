@@ -2,7 +2,7 @@ const std = @import("std");
 const Gdt = @import("kernel/Gdt.zig");
 const Idt = @import("kernel/Idt.zig");
 const Console = @import("driver/Console.zig");
-const Allocator = @import("driver/Allocator.zig");
+const Allocator = @import("kernel/Allocator.zig");
 const allocator = Allocator.allocator;
 
 pub fn init() void {

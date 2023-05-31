@@ -39,14 +39,13 @@ pub fn panic(message: []const u8, _: ?*std.builtin.StackTrace, ret_addr: ?usize)
 }
 
 export fn isrHandler(registers: Isr.Registers) void {
+    Console.write("Received isr...\n");
     if (Isr.getHandler(registers.number)) |handler|
-        handler(registers)
-    else {
-        Console.write("Received interrupt: 0x\n");
-    }
+        handler(registers);
 }
 
 export fn irqHandler(registers: Isr.Registers) void {
+    Console.write("Received irq...\n");
     if (registers.number >= 40)
         utils.outb(0xA0, 0x20); // Send reset signal to slave
     utils.outb(0x20, 0x20); // Send reset signal to master
