@@ -6,7 +6,7 @@ var column: u16 = 0;
 var color: u16 = 0x0F;
 var buffer = @intToPtr([*]volatile u16, 0xB8000);
 
-pub fn init() void {
+pub fn clear() void {
     var i: usize = 0;
     while (i < 80 * 25) : (i += 1)
         buffer[i] = color << 8 | ' ';

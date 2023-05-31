@@ -12,3 +12,7 @@ pub inline fn outb(port: u16, value: u8) void {
           [value] "{al}" (value),
     );
 }
+
+pub inline fn hlt() void {
+    asm volatile ("hlt");
+}

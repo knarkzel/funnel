@@ -9,6 +9,7 @@ pub fn build(b: *std.Build) void {
         .optimize = b.standardOptimizeOption(.{}),
     });
     funnel.setLinkerScriptPath(.{ .path = "linker.ld" });
+    funnel.addAssemblyFile("src/kernel/gdt.s");
     b.installArtifact(funnel);
 
     // Run with qemu
@@ -18,9 +19,20 @@ pub fn build(b: *std.Build) void {
         "zig-out/bin/funnel.elf",
         "-display",
         "gtk,zoom-to-fit=on",
+        "-s",
     });
     run_cmd.step.dependOn(b.getInstallStep());
 
     const run_step = b.step("run", "Run kernel");
     run_step.dependOn(&run_cmd.step);
+
+    // Debug with gdb
+    const gdb_cmd = b.addSystemCommand(&.{
+        "gdb",
+        "-tui",
+        "--args",
+        "zig-out/bin/funnel.elf",
+    });
+    const gdb_step = b.step("gdb", "Start gdb on kernel");
+    gdb_step.dependOn(&gdb_cmd.step);
 }
