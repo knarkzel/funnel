@@ -1,4 +1,4 @@
-ENTRY(main)
+ENTRY(_start)
 
 SECTIONS {
     . = 1M;

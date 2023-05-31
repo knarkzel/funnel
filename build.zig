@@ -4,11 +4,11 @@ pub fn build(b: *std.Build) void {
     // Executable options
     const funnel = b.addExecutable(.{
         .name = "funnel.elf",
-        .root_source_file = .{ .path = "src/main.zig" },
+        .root_source_file = .{ .path = "src/init.zig" },
         .target = .{ .cpu_arch = .x86, .os_tag = .freestanding },
         .optimize = b.standardOptimizeOption(.{}),
     });
-    funnel.setLinkerScriptPath(.{ .path = "linker.ld"});
+    funnel.setLinkerScriptPath(.{ .path = "linker.ld" });
     b.installArtifact(funnel);
 
     // Run with qemu
@@ -20,7 +20,7 @@ pub fn build(b: *std.Build) void {
         "gtk,zoom-to-fit=on",
     });
     run_cmd.step.dependOn(b.getInstallStep());
-    
+
     const run_step = b.step("run", "Run kernel");
     run_step.dependOn(&run_cmd.step);
 }

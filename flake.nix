@@ -15,6 +15,7 @@
     in {
       devShell = pkgs.mkShell {
         buildInputs = [
+          pkgs.zls
           pkgs.qemu
           pkgs.zigpkgs.master
         ];
