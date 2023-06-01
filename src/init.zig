@@ -34,8 +34,8 @@ const Console = @import("driver/Console.zig");
 
 pub fn panic(message: []const u8, _: ?*std.builtin.StackTrace, ret_addr: ?usize) noreturn {
     if (ret_addr) |addr| {
-        var buf: [100]u8 = undefined;
-        const message_hex = std.fmt.bufPrint(&buf, "\nPanic occured at 0x{x}: ", .{addr}) catch unreachable;
+        var buffer: [100]u8 = undefined;
+        const message_hex = std.fmt.bufPrint(&buffer, "\nPanic occured at 0x{x}: ", .{addr}) catch unreachable;
         Console.write(message_hex);
     } else {
         Console.write("\nPanic occured: ");
@@ -46,13 +46,16 @@ pub fn panic(message: []const u8, _: ?*std.builtin.StackTrace, ret_addr: ?usize)
 }
 
 export fn isrHandler(registers: Isr.Registers) void {
-    Console.write("Received isr...\n");
     if (Isr.getHandler(registers.number)) |handler|
-        handler(registers);
+        handler(registers)
+    else {
+        var buffer: [100]u8 = undefined;
+        const message_hex = std.fmt.bufPrint(&buffer, "\nReceived interrupt: 0x{x}", .{registers.number}) catch unreachable;
+        Console.write(message_hex);
+    }
 }
 
 export fn irqHandler(registers: Isr.Registers) void {
-    Console.write("Received irq...\n");
     if (registers.number >= 40)
         utils.outb(0xA0, 0x20); // Send reset signal to slave
     utils.outb(0x20, 0x20); // Send reset signal to master
@@ -61,7 +64,6 @@ export fn irqHandler(registers: Isr.Registers) void {
 }
 
 export fn _start() void {
-    // Initialize kernel
     Console.clear();
     Gdt.init();
     Idt.init();
