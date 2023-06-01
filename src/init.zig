@@ -22,7 +22,14 @@ export var stack: [16 * 1024]u8 align(16) linksection(".bss") = undefined;
 // Utilities
 const std = @import("std");
 const utils = @import("utils.zig");
+
+// Kernel
+const Gdt = @import("kernel/Gdt.zig");
+const Idt = @import("kernel/Idt.zig");
 const Isr = @import("kernel/Isr.zig");
+const Allocator = @import("kernel/Allocator.zig");
+
+// Drivers
 const Console = @import("driver/Console.zig");
 
 pub fn panic(message: []const u8, _: ?*std.builtin.StackTrace, ret_addr: ?usize) noreturn {
@@ -54,7 +61,11 @@ export fn irqHandler(registers: Isr.Registers) void {
 }
 
 export fn _start() void {
-    main.init();
+    // Initialize kernel
+    Console.clear();
+    Gdt.init();
+    Idt.init();
+    Allocator.init();
     main.main() catch |err| @panic(@errorName(err));
     while (true) utils.hlt();
 }
