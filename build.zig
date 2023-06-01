@@ -26,6 +26,7 @@ pub fn build(b: *std.Build) void {
         },
         .optimize = b.standardOptimizeOption(.{}),
     });
+    funnel.want_lto = false;
     funnel.setLinkerScriptPath(.{ .path = "linker.ld" });
     funnel.addAssemblyFile("src/kernel/gdt.s");
     funnel.addAssemblyFile("src/kernel/idt.s");
