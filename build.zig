@@ -28,17 +28,13 @@ pub fn build(b: *std.Build) void {
     });
     funnel.want_lto = false;
     funnel.setLinkerScriptPath(.{ .path = "linker.ld" });
-    funnel.addAssemblyFile("src/kernel/gdt.s");
-    funnel.addAssemblyFile("src/kernel/idt.s");
+    funnel.addAssemblyFile("src/arch/gdt.s");
+    funnel.addAssemblyFile("src/arch/idt.s");
     b.installArtifact(funnel);
 
     // Run with qemu
     const run_cmd = b.addSystemCommand(&.{
         "qemu-system-i386",
-        "-d",
-        "int",
-        "-D",
-        "/tmp/qemu.log",
         "-kernel",
         "zig-out/bin/funnel.elf",
         "-display",
